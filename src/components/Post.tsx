@@ -19,18 +19,23 @@ interface Content {
     content: string;
 }
 
-interface PostProps {
+export interface PostType {
+    id: number;
     author: Author;
     contents: Content[];
     publishedAt: Date;
 }
 
-export function Post({ author, contents, publishedAt }: PostProps) {
+interface PostProps {
+    post: PostType;
+}
+
+export function Post({ post }: PostProps) {
     const [comments, setComments] = useState(['Muito bom Devon, parabéns!! 👏👏']);
     const [newComentText, setNewComentText] = useState('');
 
-    const publishedAtDateFormatted = format(publishedAt, "d 'de' LLLL 'às' HH:mm'h'", { locale: ptBR });
-    const publishedRelativeToNow = formatDistanceToNow(publishedAt, { locale: ptBR, addSuffix: true });
+    const publishedAtDateFormatted = format(post.publishedAt, "d 'de' LLLL 'às' HH:mm'h'", { locale: ptBR });
+    const publishedRelativeToNow = formatDistanceToNow(post.publishedAt, { locale: ptBR, addSuffix: true });
 
     function handleCreateNewComment(event: FormEvent) {
         event.preventDefault();
@@ -63,21 +68,21 @@ export function Post({ author, contents, publishedAt }: PostProps) {
         <article className={styles.post}>
             <header>
                 <div className={styles.author}>
-                    <Avatar src={author.avatarUrl} />
+                    <Avatar src={post.author.avatarUrl} />
 
                     <div className={styles.authorInfo}>
-                        <strong>{author.name}</strong>
-                        <span>{author.role}</span>
+                        <strong>{post.author.name}</strong>
+                        <span>{post.author.role}</span>
                     </div>
                 </div>
 
-                <time title={publishedAtDateFormatted} dateTime={publishedAt.toISOString()}>
+                <time title={publishedAtDateFormatted} dateTime={post.publishedAt.toISOString()}>
                     {publishedRelativeToNow}
                 </time>
             </header>
 
             <div className={styles.content}>
-                {contents.map((line, index) => {
+                {post.contents.map((line, index) => {
                     switch (line.type) {
                         case 'paragraph': return <p key={line.content + index}>{line.content}</p>
                         case 'link': return (<p key={line.content + index}><a href='javascript:void(0)'>{line.content}</a></p>)
